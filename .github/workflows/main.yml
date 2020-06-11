@@ -51,7 +51,7 @@ jobs:
           tagger-email: steve9164@gmail.com
 
       - name: action-slack
-        if: always() # Pick up events even if the job fails or is canceled.
+        if: always() && steps.check.outputs.changed == 'true' # Pick up events even if the job fails or is canceled.
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
@@ -59,6 +59,6 @@ jobs:
           author_name: ${{ github.workflow }}
           mention: here
           if_mention: always
-          text: 'Published v${{ steps.check.outputs.version }} to https://www.npmjs.com/package/@steve9164/test-npm-publish'
+          text: 'Attempted to publish v${{ steps.check.outputs.version }} to https://www.npmjs.com/package/@steve9164/test-npm-publish'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
