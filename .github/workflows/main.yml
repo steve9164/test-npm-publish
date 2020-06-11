@@ -47,3 +47,15 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           tag-name: ${{ steps.check.outputs.version }}
           tag-message: ${{ steps.check.outputs.version }}
+
+      - name: action-slack
+        if: always() # Pick up events even if the job fails or is canceled.
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,commit,action,ref
+          author_name: ${{ github.workflow }}
+          mention: here
+          if_mention: always
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
