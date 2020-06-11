@@ -56,9 +56,9 @@ jobs:
         with:
           status: ${{ job.status }}
           fields: repo,commit,action,ref
-          author_name: ${{ github.workflow }}
+          author_name: 'Publish v${{ steps.check.outputs.version }} to https://www.npmjs.com/package/@steve9164/test-npm-publish'
           mention: here
           if_mention: always
-          text: 'Publishing v${{ steps.check.outputs.version }} to https://www.npmjs.com/package/@steve9164/test-npm-publish'
+          #text: 'Publishing v${{ steps.check.outputs.version }} to https://www.npmjs.com/package/@steve9164/test-npm-publish'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
