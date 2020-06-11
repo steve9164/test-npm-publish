@@ -1,6 +1,6 @@
 {
   "name": "@steve9164/test-npm-publish",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "description": "Test automated publishing to npm using GitHub Actions",
   "main": "index.js",
   "scripts": {
