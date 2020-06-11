@@ -47,6 +47,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           tag-name: ${{ steps.check.outputs.version }}
           tag-message: ${{ steps.check.outputs.version }}
+          tagger-name: Terria Bot via GitHub Actions
+          tagger-email: TerriaBot@users.noreply.github.com
 
       - name: action-slack
         if: always() # Pick up events even if the job fails or is canceled.
