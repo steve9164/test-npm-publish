@@ -1,9 +1,10 @@
 {
   "name": "@steve9164/test-npm-publish",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Test automated publishing to npm using GitHub Actions",
   "main": "index.js",
   "scripts": {
+    "postpublish": "bash -c \"git tag -a ${npm_package_version} -m \"${npm_package_version}\" && git push origin ${npm_package_version}\"",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -17,3 +18,4 @@
   },
   "homepage": "https://github.com/steve9164/test-npm-publish#readme"
 }
+
