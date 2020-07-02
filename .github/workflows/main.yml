@@ -12,48 +12,38 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
-
-      - name: Check version changes
-        uses: EndBug/version-check@v1
-        id: check
         with:
-          diff-search: true
+          fetch-depth: 2
+
+      - name: Detect a version change and tag the new version
+        uses: steve9164/action-detect-and-tag-new-version
+        id: detect
 
       - name: Version update detected
-        if: steps.check.outputs.changed == 'true'
-        run: 'echo "Version change found! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
+        if: steps.detect.outputs.previous-version != steps.detect.outputs.current-version
+        run: 'echo "Version change from ${{steps.detect.outputs.previous-version}} to ${{steps.detect.outputs.current-version}} detected"'
 
       - name: Set up Node.js for NPM
-        if: steps.check.outputs.changed == 'true'
+        if: steps.detect.outputs.previous-version != steps.detect.outputs.current-version
         uses: actions/setup-node@v1
         with:
           registry-url: 'https://registry.npmjs.org'
           scope: '@steve9164'
 
       - name: Install dependencies
-        if: steps.check.outputs.changed == 'true'
+        if: steps.detect.outputs.previous-version != steps.detect.outputs.current-version
         run: npm install
 
       - name: Publish package to NPM
-        if: steps.check.outputs.changed == 'true'
+        if: steps.detect.outputs.previous-version != steps.detect.outputs.current-version
         run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
-      - name: Tag new version
-        if: steps.check.outputs.changed == 'true'
-        uses: steve9164/annotated-tag@v1
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          tag-name: ${{ steps.check.outputs.version }}
-          tag-message: ${{ steps.check.outputs.version }}
-          tagger-name: Stephen Davies via GitHub Actions
-          tagger-email: steve9164@gmail.com
-
       # These slack success and failure message actions can be combined but it means there'll be no notification on a failed
       #  version-check (which is probably unlikely to fail). It also allows for a bit better message customisation
       - name: action-slack-success
-        if: steps.check.outputs.changed == 'true'
+        if: steps.detect.outputs.previous-version != steps.detect.outputs.current-version
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
@@ -61,7 +51,7 @@ jobs:
           author_name: ${{ github.workflow }}
           mention: here
           if_mention: always
-          text: ':white_check_mark: Published v${{ steps.check.outputs.version }} to https://www.npmjs.com/package/@steve9164/test-npm-publish'
+          text: ':white_check_mark: Published v${{ steps.detect.outputs.current-version }} to https://www.npmjs.com/package/@steve9164/test-npm-publish'
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
 
@@ -76,3 +66,23 @@ jobs:
           if_mention: always
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} # required
+
+  old-version-checker:
+    name: Run old version checker
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      # Test old method and new method
+      - name: Check version changes using old method
+        uses: EndBug/version-check@v1
+        id: check
+        with:
+          diff-search: true
+
+      - name: Version update detected using old method
+        if: steps.check.outputs.changed == 'true'
+        run: 'echo "Version change found using old version checking method! New version: ${{ steps.check.outputs.version }} (${{ steps.check.outputs.type }})"'
+
