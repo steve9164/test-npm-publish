@@ -16,7 +16,7 @@ jobs:
           fetch-depth: 2
 
       - name: Detect a version change and tag the new version
-        uses: steve9164/action-detect-and-tag-new-version
+        uses: steve9164/action-detect-and-tag-new-version@v1
         id: detect
 
       - name: Version update detected
