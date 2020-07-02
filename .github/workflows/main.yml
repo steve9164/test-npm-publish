@@ -18,6 +18,12 @@ jobs:
       - name: Detect a version change and tag the new version
         uses: steve9164/action-detect-and-tag-new-version@v1
         id: detect
+        with:
+          tag-template: '{VERSION}'
+          use-annotated-tag: 'true'
+          tagger-name: 'Stephen Davies via GitHub Actions'
+          tagger-email: 'steve9164@gmail.com'
+
 
       - name: Version update detected
         if: steps.detect.outputs.previous-version != steps.detect.outputs.current-version
